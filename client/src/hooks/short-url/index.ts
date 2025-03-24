@@ -2,11 +2,9 @@ import axios from "axios";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-const API_URL = "http://localhost:5000/api/url"; // WIP: add actual server domain
-
 export const useShortUrl = () => {
   const mutationFn = async (url: string) => {
-    const { data } = await axios.post(`${API_URL}/short`, {
+    const { data } = await axios.post(`${process.env.SERVER_API!}/short`, {
       longUrl: url,
     });
 
