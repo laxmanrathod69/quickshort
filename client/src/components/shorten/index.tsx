@@ -13,26 +13,24 @@ import { useEffect, useState } from "react";
 
 const Shorten = () => {
   const { mutate, data, isPending } = useShortUrl();
-  const { form, urlSchema } = useSchema();
+  const { form, handleSubmit, errors, setValue } = useSchema();
   const { copy, copied } = useCopyToClipboard();
 
   const [currentUrl, setCurrentUrl] = useState<string>("");
 
   useEffect(() => {
-    if (data?.shortUrl) {
+    if (data?.shortUrl && currentUrl !== data.shortUrl) {
       setCurrentUrl(data.shortUrl);
-      form.setValue("url", data.shortUrl);
+      setValue("url", data.shortUrl);
     }
-  }, [data, form]);
+  }, [data?.shortUrl, setValue, currentUrl]);
 
-  const handleUrls = ({ url }: z.infer<typeof urlSchema>) => {
+  const handleUrls = ({
+    url,
+  }: z.infer<ReturnType<typeof useSchema>["urlSchema"]>) => {
     if (!isPending) {
       mutate(url);
     }
-  };
-
-  const handleCopyButton = () => {
-    copy(currentUrl);
   };
 
   return (
@@ -45,7 +43,7 @@ const Shorten = () => {
       <Card className="w-1/2 mt-6 p-5 border-none shadow-sm">
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit(handleUrls)}
+            onSubmit={handleSubmit(handleUrls)}
             className="flex flex-col items-center gap-4"
           >
             <FormField
@@ -56,30 +54,27 @@ const Shorten = () => {
                   <div className="flex justify-center border-gray-300 border rounded-md">
                     <Input
                       className={`border-none text-gray-800 ${
-                        currentUrl && "rounded-r-none"
+                        data?.shortUrl && "rounded-r-none"
                       }`}
                       placeholder="Enter your long URL..."
                       {...field}
-                      onChange={(e) => {
-                        field.onChange(e);
-                        setCurrentUrl(e.target.value);
-                      }}
                     />
 
-                    <div
-                      className={`flex items-center justify-center w-9 bg-gray-100 p-1 rounded-r-md cursor-pointer ${
-                        !currentUrl && "hidden"
-                      }`}
-                      onClick={handleCopyButton}
-                    >
-                      {currentUrl && !copied && (
-                        <Copy className="w-[22px] h-[22px]" />
-                      )}
-                      {copied && <Check className="w-[20px] h-[20px]" />}
-                    </div>
+                    {data?.shortUrl && (
+                      <div
+                        className="flex items-center justify-center w-9 bg-gray-100 p-1 rounded-r-md cursor-pointer"
+                        onClick={() => copy(data.shortUrl)}
+                      >
+                        {copied ? (
+                          <Check className="w-[20px] h-[20px]" />
+                        ) : (
+                          <Copy className="w-[22px] h-[22px]" />
+                        )}
+                      </div>
+                    )}
                   </div>
                   <ErrorMessage
-                    errors={form.formState.errors}
+                    errors={errors}
                     name="url"
                     render={({ message }) => (
                       <p className="text-red-500 text-[.69rem] ml-1 font-medium">
@@ -91,8 +86,8 @@ const Shorten = () => {
               )}
             />
 
-            <Button className="w-fit" type="submit">
-              Shorten URL
+            <Button className="w-fit" type="submit" disabled={isPending}>
+              {isPending ? "Shortening..." : "Shorten URL"}
             </Button>
           </form>
         </Form>

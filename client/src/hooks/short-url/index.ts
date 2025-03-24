@@ -1,27 +1,35 @@
 import axios from "axios";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useState, useEffect, useCallback } from "react";
+
+const SERVER_API = import.meta.env.VITE_SERVER_API!;
 
 export const useShortUrl = () => {
-  const mutationFn = async (url: string) => {
-    const { data } = await axios.post(`${process.env.SERVER_API!}/short`, {
+  const [error, setError] = useState<Error | null>(null);
+
+  const mutationFn = useCallback(async (url: string) => {
+    const { data } = await axios.post(`${SERVER_API}/short`, {
       longUrl: url,
     });
-
     return data;
-  };
+  }, []);
 
-  const { data, mutate, isPending, error } = useMutation({
+  const { data, mutate, isPending } = useMutation({
     mutationFn,
     onSuccess: (data) => {
       toast.success(data?.message || "Short URL created successfully");
     },
+    onError: (error) => {
+      setError(error);
+    },
   });
 
-  if (error) {
-    toast.error("Unexpected error occurred.");
-    return { data: null, mutate, isPending };
-  }
+  useEffect(() => {
+    if (error) {
+      toast.error(error?.message || "Unexpected error occurred.");
+    }
+  }, [error]);
 
-  return { data, mutate, isPending };
+  return { data: error ? null : data, mutate, isPending };
 };
