@@ -28,7 +28,8 @@ export const shortenUrl = async (
     await newUrl.save();
 
     res.status(201).json({
-      shortUrl: `http://localhost:5000/api/url/${shortId}`, // WIP: Add actual domain here.
+      shortUrl: `${process.env.SERVER_BASE_URL!}/${shortId}`, // WIP: Add actual domain here.
+      message: "URL shortened successfully",
     });
   } catch (error) {
     console.error(JSON.stringify(error, null, 2));
