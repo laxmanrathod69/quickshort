@@ -1,7 +1,7 @@
 <div align="center">
   <br />
-    <a href="" target="_blank">
-      <img src="" alt="Project Banner">
+    <a href="https://quickshort-ten.vercel.app" target="_blank">
+      <img src="./public/project-banner.png" alt="Project Banner">
     </a>
   <br />
   <div>
@@ -47,6 +47,7 @@
 
 - React.js (Vite for fast development)
 - Tailwind CSS (for modern UI styling)
+- React Query (for state management)
 - Axios (for API requests)
 
 ### **Backend**
@@ -62,6 +63,7 @@
 /url-shortener
  ├── client/        (React.js Frontend)
  ├── server/        (Express.js Backend)
+ ├── public/        (Static Assets)
  ├── package.json   (Project Dependencies)
  ├── .gitignore     (Git Ignore File)
  ├── LICENSE        (Project License)
@@ -97,14 +99,16 @@ pnpm install
 #### 🔹 Create a `.env` file in the `server/` directory
 
 ```ts
-MONGO_URI = your_mongodb_connection_string;
+CLIENT_API = <your_frontend_api_url>;
+SERVER_API = <your_backend_api_url>;
+MONGO_URI = <your_mongodb_connection_string>;
 PORT = 5000;
 ```
 
 #### 🔹 Start the Backend Server
 
 ```sh
-node index.js
+pnpm dev
 ```
 
 ### 3️⃣ Frontend Setup (React.js)
@@ -112,6 +116,12 @@ node index.js
 ```sh
 cd ../client
 pnpm install
+```
+
+#### 🔹 Create a `.env` file in the `client/` directory
+
+```ts
+VITE_SERVER_API = <your_backend_api_url>;
 ```
 
 #### 🔹 Start the Frontend Server
@@ -128,7 +138,7 @@ Visit: [http://localhost:5173](http://localhost:5173)
 
 ### 1️⃣ **Shorten a URL**
 
-**POST** `/shorten`
+**POST** `/short`
 
 ```json
 {
