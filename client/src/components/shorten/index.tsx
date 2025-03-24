@@ -10,6 +10,7 @@ import { useSchema } from "@/hooks/short-url/schema";
 import { Check } from "@/icons/check";
 import { useCopyToClipboard } from "@/hooks/copy-to-clipboard";
 import { useEffect, useState } from "react";
+import { Loader } from "@/icons/loader";
 
 const Shorten = () => {
   const { mutate, data, isPending } = useShortUrl();
@@ -87,7 +88,14 @@ const Shorten = () => {
             />
 
             <Button className="w-fit" type="submit" disabled={isPending}>
-              {isPending ? "Shortening..." : "Shorten URL"}
+              {isPending ? (
+                <>
+                  <Loader className="animate-spin" />
+                  Shortening...
+                </>
+              ) : (
+                "Shorten URL"
+              )}
             </Button>
           </form>
         </Form>
